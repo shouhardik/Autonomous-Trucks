@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "scripts":{
+    "start": "node server.js",
+    "lint": "eslint .",
+    "test": "node --test"
+  }
+}

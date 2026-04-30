@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autonomous Trucks Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Autonomous Trucks Control Center</h1>
+      <p>Monitor fleet performance and manage customer and load operations.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Fleet Data</h2>
+        <div id="fleetStats" class="stats"></div>
+        <table id="trucksTable">
+          <thead>
+            <tr>
+              <th>Truck ID</th>
+              <th>Status</th>
+              <th>Location</th>
+              <th>Battery</th>
+              <th>Speed (km/h)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>Customer CRUD</h2>
+        <form id="customerForm" class="stack">
+          <input type="hidden" id="customerId" />
+          <input id="full_name" placeholder="Full name" required />
+          <input id="email" type="email" placeholder="Email" required />
+          <input id="phone" placeholder="Phone" required />
+          <input id="company_name" placeholder="Company (optional)" />
+          <input id="address" placeholder="Address" required />
+          <div class="actions">
+            <button type="submit">Save Customer</button>
+            <button type="button" id="resetCustomer">Clear</button>
+          </div>
+        </form>
+        <table id="customersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>Load CRUD</h2>
+        <form id="loadForm" class="stack">
+          <input type="hidden" id="loadId" />
+          <select id="customer_id" required></select>
+          <input id="origin" placeholder="Origin" required />
+          <input id="destination" placeholder="Destination" required />
+          <input id="cargo_type" placeholder="Cargo type" required />
+          <input id="weight_kg" type="number" min="1" step="0.1" placeholder="Weight (kg)" required />
+          <input id="pickup_date" type="date" required />
+          <input id="delivery_date" type="date" required />
+          <input id="load_status" placeholder="Status (e.g. In Transit)" required />
+          <input id="assigned_truck_id" placeholder="Assigned Truck ID (optional)" />
+          <div class="actions">
+            <button type="submit">Save Load</button>
+            <button type="button" id="resetLoad">Clear</button>
+          </div>
+        </form>
+        <table id="loadsTable">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Route</th>
+              <th>Cargo</th>
+              <th>Weight</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+  </html>
