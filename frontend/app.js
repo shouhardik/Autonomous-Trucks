@@ -7,6 +7,15 @@ const api = {
 let customersCache = [];
 let loadsCache = [];
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 const trucksTbody = document.querySelector("#trucksTable tbody");
 const customersTbody = document.querySelector("#customersTable tbody");
 const loadsTbody = document.querySelector("#loadsTable tbody");
@@ -39,11 +48,11 @@ function renderTrucks(trucks) {
     .map(
       (t) => `
     <tr>
-      <td>${t.truck_id}</td>
-      <td>${t.status}</td>
-      <td>${t.location}</td>
-      <td>${t.battery_percent}%</td>
-      <td>${t.speed_kmh}</td>
+      <td>${escapeHtml(t.truck_id)}</td>
+      <td>${escapeHtml(t.status)}</td>
+      <td>${escapeHtml(t.location)}</td>
+      <td>${escapeHtml(t.battery_percent)}%</td>
+      <td>${escapeHtml(t.speed_kmh)}</td>
     </tr>
   `
     )
@@ -65,10 +74,10 @@ function renderCustomers() {
     .map(
       (c) => `
       <tr>
-        <td>${c.full_name}</td>
-        <td>${c.email}</td>
-        <td>${c.phone}</td>
-        <td>${c.company_name || "-"}</td>
+        <td>${escapeHtml(c.full_name)}</td>
+        <td>${escapeHtml(c.email)}</td>
+        <td>${escapeHtml(c.phone)}</td>
+        <td>${escapeHtml(c.company_name || "-")}</td>
         <td class="table-actions">
           <button onclick="editCustomer(${c.id})">Edit</button>
           <button class="danger" onclick="deleteCustomer(${c.id})">Delete</button>
@@ -79,7 +88,7 @@ function renderCustomers() {
     .join("");
 
   const options = customersCache
-    .map((c) => `<option value="${c.id}">${c.full_name} (ID ${c.id})</option>`)
+    .map((c) => `<option value="${c.id}">${escapeHtml(c.full_name)} (ID ${c.id})</option>`)
     .join("");
   customerSelect.innerHTML = options || '<option value="">Add a customer first</option>';
 }
@@ -89,11 +98,11 @@ function renderLoads() {
     .map(
       (l) => `
       <tr>
-        <td>${l.customer_name}</td>
-        <td>${l.origin} -> ${l.destination}</td>
-        <td>${l.cargo_type}</td>
-        <td>${l.weight_kg}</td>
-        <td>${l.status}</td>
+        <td>${escapeHtml(l.customer_name)}</td>
+        <td>${escapeHtml(l.origin)} -> ${escapeHtml(l.destination)}</td>
+        <td>${escapeHtml(l.cargo_type)}</td>
+        <td>${escapeHtml(l.weight_kg)}</td>
+        <td>${escapeHtml(l.status)}</td>
         <td class="table-actions">
           <button onclick="editLoad(${l.id})">Edit</button>
           <button class="danger" onclick="deleteLoad(${l.id})">Delete</button>
@@ -123,44 +132,52 @@ async function loadAll() {
 
 customerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const payload = {
-    full_name: document.querySelector("#full_name").value.trim(),
-    email: document.querySelector("#email").value.trim(),
-    phone: document.querySelector("#phone").value.trim(),
-    company_name: document.querySelector("#company_name").value.trim(),
-    address: document.querySelector("#address").value.trim(),
-  };
-  const id = customerIdField.value;
-  await http(id ? `${api.customers}/${id}` : api.customers, {
-    method: id ? "PUT" : "POST",
-    body: JSON.stringify(payload),
-  });
-  customerForm.reset();
-  customerIdField.value = "";
-  await loadAll();
+  try {
+    const payload = {
+      full_name: document.querySelector("#full_name").value.trim(),
+      email: document.querySelector("#email").value.trim(),
+      phone: document.querySelector("#phone").value.trim(),
+      company_name: document.querySelector("#company_name").value.trim(),
+      address: document.querySelector("#address").value.trim(),
+    };
+    const id = customerIdField.value;
+    await http(id ? `${api.customers}/${id}` : api.customers, {
+      method: id ? "PUT" : "POST",
+      body: JSON.stringify(payload),
+    });
+    customerForm.reset();
+    customerIdField.value = "";
+    await loadAll();
+  } catch (err) {
+    alert(err.message);
+  }
 });
 
 loadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const payload = {
-    customer_id: Number(customerSelect.value),
-    origin: document.querySelector("#origin").value.trim(),
-    destination: document.querySelector("#destination").value.trim(),
-    cargo_type: document.querySelector("#cargo_type").value.trim(),
-    weight_kg: Number(document.querySelector("#weight_kg").value),
-    pickup_date: document.querySelector("#pickup_date").value,
-    delivery_date: document.querySelector("#delivery_date").value,
-    status: document.querySelector("#load_status").value.trim(),
-    assigned_truck_id: document.querySelector("#assigned_truck_id").value.trim(),
-  };
-  const id = loadIdField.value;
-  await http(id ? `${api.loads}/${id}` : api.loads, {
-    method: id ? "PUT" : "POST",
-    body: JSON.stringify(payload),
-  });
-  loadForm.reset();
-  loadIdField.value = "";
-  await loadAll();
+  try {
+    const payload = {
+      customer_id: Number(customerSelect.value),
+      origin: document.querySelector("#origin").value.trim(),
+      destination: document.querySelector("#destination").value.trim(),
+      cargo_type: document.querySelector("#cargo_type").value.trim(),
+      weight_kg: Number(document.querySelector("#weight_kg").value),
+      pickup_date: document.querySelector("#pickup_date").value,
+      delivery_date: document.querySelector("#delivery_date").value,
+      status: document.querySelector("#load_status").value.trim(),
+      assigned_truck_id: document.querySelector("#assigned_truck_id").value.trim(),
+    };
+    const id = loadIdField.value;
+    await http(id ? `${api.loads}/${id}` : api.loads, {
+      method: id ? "PUT" : "POST",
+      body: JSON.stringify(payload),
+    });
+    loadForm.reset();
+    loadIdField.value = "";
+    await loadAll();
+  } catch (err) {
+    alert(err.message);
+  }
 });
 
 resetCustomerBtn.addEventListener("click", () => {
@@ -211,8 +228,12 @@ window.editLoad = (id) => {
 
 window.deleteLoad = async (id) => {
   if (!confirm("Delete this load?")) return;
-  await http(`${api.loads}/${id}`, { method: "DELETE" });
-  await loadAll();
+  try {
+    await http(`${api.loads}/${id}`, { method: "DELETE" });
+    await loadAll();
+  } catch (err) {
+    alert(err.message);
+  }
 };
 
 loadAll();
