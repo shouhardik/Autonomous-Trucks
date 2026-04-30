@@ -10,7 +10,7 @@ body {
 }
 
 header {
-  background: #b71c1c;
+  background: #1b5e20;
   color: #fff;
   padding: 1.5rem 2rem;
 }
@@ -46,7 +46,7 @@ p {
 }
 
 .stats div {
-  background: #fdecec;
+  background: #e8f5e9;
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
@@ -69,7 +69,7 @@ button {
 button {
   border: none;
   cursor: pointer;
-  background: #b71c1c;
+  background: #1b5e20;
   color: #fff;
   font-weight: 600;
 }
